@@ -1,0 +1,12 @@
+/vendor/
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+
+/apps/*/*/var/
+/apps/*/*/public/bundles/
+
+/vendor/
+###< symfony/framework-bundle ###

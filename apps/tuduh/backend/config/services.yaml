@@ -1,0 +1,13 @@
+parameters:
+
+services:
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    TechyCode\Apps\Tuduh\Backend\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    TechyCode\Shared\:
+        resource: '../../../../src/Shared'
