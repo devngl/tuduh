@@ -28,7 +28,6 @@ class InMemorySymfonyQueryBus implements QueryBus
 
     public function ask(Query $query): ?Response
     {
-        dump($query);
         try {
             /** @var HandledStamp $stamp */
             $stamp = $this->bus->dispatch($query)->last(HandledStamp::class);

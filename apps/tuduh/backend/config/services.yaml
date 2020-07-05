@@ -31,8 +31,7 @@ services:
         resource: '../../../../src/Tuduh'
 
     # Tagging
-    TechyCode\Shared\Infrastructure\Bus\Event\InMemory\InMemorySymfonyEventBus:
-        arguments: [!tagged techycode.domain_event_subscriber]
+    TechyCode\Shared\Infrastructure\Bus\Event\Kafka\KafkaEventBus:
         lazy: true
 
     TechyCode\Shared\Infrastructure\Bus\Event\DomainEventMapping:
@@ -60,3 +59,13 @@ services:
 
     TechyCode\Shared\Infrastructure\Bus\Query\InMemorySymfonyQueryBus:
         arguments: [!tagged techycode.query_handler]
+
+    # Kafka
+    TechyCode\Shared\Infrastructure\Bus\Event\Kafka\KafkaConnection:
+        arguments:
+            - host: '%env(KAFKA_HOST)%'
+              port: '%env(KAFKA_PORT)%'
+              group_id: '%env(KAFKA_GROUP_ID)%'
+
+    # -- IMPLEMENTATIONS SELECTOR --
+    TechyCode\Shared\Domain\Bus\Event\EventBus: '@TechyCode\Shared\Infrastructure\Bus\Event\Kafka\KafkaEventBus'
