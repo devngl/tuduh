@@ -1,0 +1,18 @@
+services:
+  # Databases
+  Doctrine\ORM\EntityManager:
+    factory: [TechyCode\Tuduh\Shared\Infrastructure\Doctrine\TuduhEntityManagerFactory, create]
+    arguments:
+      - driver:   '%env(TUDUH_DATABASE_DRIVER)%'
+        host:     '%env(TUDUH_DATABASE_HOST)%'
+        port:     '%env(TUDUH_DATABASE_PORT)%'
+        dbname:   '%env(TUDUH_DATABASE_NAME)%'
+        user:     '%env(TUDUH_DATABASE_USER)%'
+        password: '%env(TUDUH_DATABASE_PASSWORD)%'
+      - '%env(APP_ENV)%'
+    tags:
+      - { name: techycode.database_connection }
+    public: true
+
+  # Tasks
+  TechyCode\Tuduh\Tasks\Domain\TaskRepository: '@TechyCode\Tuduh\Tasks\Infrastructure\Persistence\DoctrineTaskRepository'

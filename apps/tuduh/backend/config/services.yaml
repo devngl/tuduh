@@ -1,13 +1,62 @@
-parameters:
+imports:
+    - { resource: ../../../../src/Tuduh/Shared/Infrastructure/Symfony/DependencyInjection/tuduh_services.yaml }
 
 services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+    _instanceof:
+        TechyCode\Shared\Domain\Bus\Event\DomainEventSubscriber:
+            tags: ['techycode.domain_event_subscriber']
+
+        TechyCode\Shared\Domain\Bus\Command\CommandHandler:
+            tags: ['techycode.command_handler']
+
+        TechyCode\Shared\Domain\Bus\Query\QueryHandler:
+            tags: ['techycode.query_handler']
+
     TechyCode\Apps\Tuduh\Backend\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    TechyCode\Apps\Tuduh\Backend\Command\:
+        resource: '../src/Command'
+        tags: ['console.command']
+
     TechyCode\Shared\:
         resource: '../../../../src/Shared'
+
+    TechyCode\Tuduh\:
+        resource: '../../../../src/Tuduh'
+
+    # Tagging
+    TechyCode\Shared\Infrastructure\Bus\Event\InMemory\InMemorySymfonyEventBus:
+        arguments: [!tagged techycode.domain_event_subscriber]
+        lazy: true
+
+    TechyCode\Shared\Infrastructure\Bus\Event\DomainEventMapping:
+        arguments: [!tagged techycode.domain_event_subscriber]
+
+    TechyCode\Shared\Infrastructure\Bus\Event\DomainEventSubscriberLocator:
+        arguments: [!tagged techycode.domain_event_subscriber]
+
+    TechyCode\Shared\Infrastructure\Doctrine\DatabaseConnections:
+        arguments: [!tagged techycode.database_connection]
+
+    TechyCode\Shared\Infrastructure\Symfony\AddJsonBodyToRequestListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+    TechyCode\Shared\Infrastructure\Symfony\ApiExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onException }
+
+
+    # -- APP DEFINITIONS --
+    # Command/Query Handlers
+    TechyCode\Shared\Infrastructure\Bus\Command\InMemorySymfonyCommandBus:
+        arguments: [!tagged techycode.command_handler]
+
+    TechyCode\Shared\Infrastructure\Bus\Query\InMemorySymfonyQueryBus:
+        arguments: [!tagged techycode.query_handler]
